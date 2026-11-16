@@ -15,8 +15,7 @@ Workflow basado en `z739_final_senior` (cátedra), con las modificaciones del ex
 
 | Archivo | Para qué |
 |---|---|
-| `739_final_senior-666128_final.ipynb` | Notebook completa que genera la predicción final |
-| `ensemble_final.ipynb` | (Opcional) ensemble por ranking de 666124 + 666126 + 666128 |
+| `739_final_senior-666128.ipynb` | Notebook que genera la predicción final, con las salidas de la corrida |
 | `PARAM.yml` | Parámetros exactos de la corrida 666128 |
 | `BO_log.txt` | Resultado de la optimización bayesiana |
 | `impo.txt` | Importancia de variables del modelo final |
@@ -26,7 +25,6 @@ Workflow basado en `z739_final_senior` (cátedra), con las modificaciones del ex
 
 * Semilla primigenia 123443.
 * Data drifting `rank_cero_fijo` (en lugar de `deflacion`), con `set.seed` previo.
-* Random Forest de features con semilla explícita y `deterministic = TRUE`.
 * Canaritos: ratio 0.75, desvíos 0; entrenamiento 202101–202104, validación 202106.
 * Training strategy: se excluyen **202003–202006** del training de la bayesiana y del final train.
 * Optimización bayesiana: 50 iteraciones, 8 hiperparámetros (se agregan `lambda_l2`, `bagging_fraction`, `min_data_in_leaf`), árboles y hojas entre 4 y 128, **semillerío de 50 LightGBM por punto** (AUC de la probabilidad promedio).
@@ -38,7 +36,7 @@ Workflow basado en `z739_final_senior` (cátedra), con las modificaciones del ex
 2. Verificar que existan:
    * el dataset en `/content/datasets/analistasr_competencia_2026.csv.gz`
    * el bucket montado en `/content/buckets/b1/`
-3. Abrir `739_final_senior-666128_final.ipynb` con runtime **R** y ejecutar todas las celdas en orden.
+3. Abrir `739_final_senior-666128.ipynb` con runtime **R** y ejecutar todas las celdas en orden.
 4. Los resultados quedan en `/content/buckets/b1/exp/WF666128/`. El archivo final es `kaggle/KA666128_s50_10000.csv`.
 
 **Tiempo aproximado:** ~11 horas (preprocesamiento ~30 min, bayesiana ~10 h, final train y scoring ~1 h).
@@ -47,7 +45,7 @@ Workflow basado en `z739_final_senior` (cátedra), con las modificaciones del ex
 
 ## Nota de reproducibilidad
 
-La corrida original no tenía fijada la semilla antes del drifting (`frank(ties.method = "random")`), por lo que el conjunto de variables que sobrevive a los canaritos podía variar entre sesiones (la corrida final usó 309 variables). En esta versión se agregó `set.seed` antes del drifting y semilla en el Random Forest, de modo que corridas sucesivas den siempre el mismo resultado. Por ese motivo una réplica puede diferir levemente en la cantidad de variables y en la ganancia respecto de la corrida original.
+La corrida original no tenía fijada la semilla antes del drifting (`frank(ties.method = "random")`), por lo que el conjunto de variables que sobrevive a los canaritos podía variar entre sesiones (la corrida final usó 309 variables). Después de la corrida se agregó `set.seed` antes del drifting, de modo que corridas sucesivas den siempre el mismo resultado. Las salidas que se ven en la notebook son de la corrida original, sin esa semilla; por eso una réplica puede diferir levemente en la cantidad de variables y en la ganancia.
 
 ## Resumen de experimentos
 
